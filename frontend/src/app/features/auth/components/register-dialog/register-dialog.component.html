@@ -1,0 +1,38 @@
+<h2 mat-dialog-title>Crear Cuenta</h2>
+<mat-dialog-content>
+  <p>
+    El correo <strong>{{ data.email }}</strong> no está registrado. Completa tus
+    datos.
+  </p>
+
+  <form [formGroup]="form">
+    <div class="row">
+      <mat-form-field appearance="outline" class="w-100 mb-2">
+        <mat-label>Nombre</mat-label>
+        <input matInput formControlName="name" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-100 mb-2">
+        <mat-label>Apellido</mat-label>
+        <input matInput formControlName="lastname" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Contraseña</mat-label>
+        <input matInput type="password" formControlName="password" />
+      </mat-form-field>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancelar</button>
+  <button
+    mat-flat-button
+    color="primary"
+    [disabled]="form.invalid"
+    (click)="onConfirm()"
+  >
+    Registrarme
+  </button>
+</mat-dialog-actions>

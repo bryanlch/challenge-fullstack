@@ -1,0 +1,62 @@
+<h2 mat-dialog-title>{{ isEditMode ? "Editar Tarea" : "Nueva Tarea" }}</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" class="d-flex flex-column gap-3 pt-2">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Título</mat-label>
+      <input matInput formControlName="title" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Descripción</mat-label>
+      <textarea matInput formControlName="description" rows="3"></textarea>
+    </mat-form-field>
+
+    @if (!isEditMode) {
+    <div
+      class="d-flex align-items-center justify-content-between bg-light p-3 rounded mb-2"
+    >
+      <span>¿Asignar a otra persona?</span>
+      <mat-slide-toggle formControlName="asSupervisor" color="primary">
+        {{ isSupervisorMode() ? "Sí (Supervisor)" : "No (Auto-asignar)" }}
+      </mat-slide-toggle>
+    </div>
+    } @if (isSupervisorMode()) {
+    <mat-form-field
+      appearance="outline"
+      class="full-width animate__animated animate__fadeIn"
+    >
+      <mat-label>Seleccionar Responsable</mat-label>
+      <mat-select formControlName="assignedToId">
+        @for (user of users$ | async; track user.email) {
+        <mat-option [value]="user.email">
+          {{ user.name }} {{ user.lastname }}
+        </mat-option>
+        }
+      </mat-select>
+      <mat-hint>Usted quedará registrado como supervisor</mat-hint>
+    </mat-form-field>
+    } @if (isEditMode) {
+    <mat-form-field appearance="outline">
+      <mat-label>Estado Actual</mat-label>
+      <mat-select formControlName="status">
+        <mat-option value="pending">Pendiente</mat-option>
+        <mat-option value="in_progress">En Curso</mat-option>
+        <mat-option value="completed">Completada</mat-option>
+      </mat-select>
+    </mat-form-field>
+    }
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancelar</button>
+  <button
+    mat-flat-button
+    color="primary"
+    (click)="onSave()"
+    [disabled]="form.invalid"
+  >
+    Guardar
+  </button>
+</mat-dialog-actions>

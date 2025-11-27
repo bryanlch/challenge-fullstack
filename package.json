@@ -1,0 +1,12 @@
+{
+   "name": "backend-root",
+   "scripts": {
+      "clean": "npx kill-port 5001 8085 9099 4000",
+      "predev": "npm run clean && cd functions && npm run build",
+      "dev": "firebase emulators:start",
+      "dev:watch": "npm run clean && concurrently \"cd functions && npm run build:watch\" \"firebase emulators:start\""
+   },
+   "devDependencies": {
+      "concurrently": "^8.2.2"
+   }
+}

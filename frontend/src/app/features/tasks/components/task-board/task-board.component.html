@@ -1,0 +1,72 @@
+<div class="row g-3">
+  <div class="col-md-4">
+    <div class="status-column pending-col p-3 rounded h-100">
+      <h6 class="text-uppercase fw-bold text-danger mb-3 opacity-75">
+        Pendientes ({{ pendingTasks.length }})
+      </h6>
+
+      @for (task of pendingTasks; track task.id) {
+      <mat-card
+        class="mb-2 task-card"
+        [class.clickable]="!isReadOnly"
+        (click)="onCardClick(task)"
+      >
+        <mat-card-content class="p-3">
+          <p class="fw-bold mb-1">{{ task.title }}</p>
+          <p class="text-muted small mb-0 text-truncate">
+            {{ task.description }}
+          </p>
+        </mat-card-content>
+      </mat-card>
+      }
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="status-column progress-col p-3 rounded h-100">
+      <h6 class="text-uppercase fw-bold text-warning mb-3 opacity-75 text-dark">
+        En Curso ({{ progressTasks.length }})
+      </h6>
+
+      @for (task of progressTasks; track task.id) {
+      <mat-card
+        class="mb-2 task-card"
+        [class.clickable]="!isReadOnly"
+        (click)="onCardClick(task)"
+      >
+        <mat-card-content class="p-3">
+          <p class="fw-bold mb-1">{{ task.title }}</p>
+          <p class="text-muted small mb-0 text-truncate">
+            {{ task.description }}
+          </p>
+        </mat-card-content>
+      </mat-card>
+      }
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="status-column completed-col p-3 rounded h-100">
+      <h6 class="text-uppercase fw-bold text-success mb-3 opacity-75">
+        Completadas ({{ completedTasks.length }})
+      </h6>
+
+      @for (task of completedTasks; track task.id) {
+      <mat-card
+        class="mb-2 task-card"
+        [class.clickable]="!isReadOnly"
+        (click)="onCardClick(task)"
+      >
+        <mat-card-content class="p-3">
+          <p class="fw-bold mb-1 text-decoration-line-through">
+            {{ task.title }}
+          </p>
+          <p class="text-muted small mb-0">
+            {{ task.createdAt | date : "shortDate" }}
+          </p>
+        </mat-card-content>
+      </mat-card>
+      }
+    </div>
+  </div>
+</div>

@@ -1,0 +1,42 @@
+.spacer {
+  flex: 1 1 auto;
+}
+
+.create-card {
+  border-radius: 1rem !important; /* rounded-4 */
+}
+
+.task-card {
+  border-radius: 1rem !important; /* rounded-4 */
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+
+.task-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0,0,0,.12);
+}
+
+.completed-task {
+  opacity: 0.75;
+}
+
+.tasks-list {
+  display: grid;
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .tasks-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1200px) {
+  .tasks-list {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+mat-form-field .mat-mdc-text-field-wrapper {
+  border-radius: 1rem !important;
+}
