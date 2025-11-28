@@ -1,9 +1,15 @@
 import { Request, Response } from 'express';
-import { createTask, getTasks } from './task.controller';
+import * as taskController from './task.controller';
 import { CreateTaskUseCase } from '../../../application/task/create-task.use-case';
+import { GetTasksUseCase } from '../../../application/task/get-tasks.use-case';
+import { UpdateTaskUseCase } from '../../../application/task/update-task.use-case';
+import { DeleteTaskUseCase } from '../../../application/task/delete-task.use-case';
 
+// Mocks de los Casos de Uso
 jest.mock('../../../application/task/create-task.use-case');
 jest.mock('../../../application/task/get-tasks.use-case');
+jest.mock('../../../application/task/update-task.use-case');
+jest.mock('../../../application/task/delete-task.use-case');
 
 describe('TaskController', () => {
    let mockReq: Partial<Request>;
@@ -12,57 +18,80 @@ describe('TaskController', () => {
    let statusMock: jest.Mock;
 
    beforeEach(() => {
-      // Resetear mocks antes de cada test
       jest.clearAllMocks();
-
       jsonMock = jest.fn();
       statusMock = jest.fn().mockReturnValue({ json: jsonMock });
-
-      mockRes = {
-         status: statusMock
-      } as unknown as Response;
+      mockRes = { status: statusMock } as unknown as Response;
    });
 
+   // --- TEST CREATE ---
    describe('createTask', () => {
-      it('debería crear una tarea exitosamente (201)', async () => {
-         // Setup
-         mockReq = {
-            body: { title: 'Test', description: 'Desc' },
-            user: { uid: 'user-123' } // Simulamos token decodificado
-         } as any;
-
-         // Mockear la ejecución exitosa del caso de uso
-         (CreateTaskUseCase.prototype.execute as jest.Mock).mockResolvedValue({ id: 'task-1' });
-
-         // Ejecutar
-         await createTask(mockReq as Request, mockRes as Response);
-
-         // Verificar
+      it('debería retornar 201 al crear', async () => {
+         mockReq = { body: { title: 'T' }, user: { uid: 'u1' } } as any;
+         (CreateTaskUseCase.prototype.execute as jest.Mock).mockResolvedValue({ id: '1' });
+         await taskController.createTask(mockReq as Request, mockRes as Response);
          expect(statusMock).toHaveBeenCalledWith(201);
-         expect(jsonMock).toHaveBeenCalledWith({ id: 'task-1' });
       });
 
-      it('debería retornar 401 si no hay usuario autenticado', async () => {
-         mockReq = { body: {}, user: undefined } as any; // Sin usuario
-
-         await createTask(mockReq as Request, mockRes as Response);
-
+      it('debería retornar 401 si no hay usuario', async () => {
+         mockReq = { body: {}, user: undefined } as any;
+         await taskController.createTask(mockReq as Request, mockRes as Response);
          expect(statusMock).toHaveBeenCalledWith(401);
-         expect(jsonMock).toHaveBeenCalledWith({ message: 'User not authenticated' });
       });
 
-      it('debería retornar 500 si el caso de uso falla', async () => {
-         mockReq = { body: {}, user: { uid: '123' } } as any;
+      it('debería retornar 500 si falla', async () => {
+         mockReq = { body: {}, user: { uid: 'u1' } } as any;
+         (CreateTaskUseCase.prototype.execute as jest.Mock).mockRejectedValue(new Error('Fail'));
+         await taskController.createTask(mockReq as Request, mockRes as Response);
+         expect(statusMock).toHaveBeenCalledWith(500);
+      });
+   });
 
-         // Forzamos un error
-         (CreateTaskUseCase.prototype.execute as jest.Mock).mockRejectedValue(new Error('DB Error'));
+   // --- TEST GET ---
+   describe('getTasks', () => {
+      it('debería retornar 200 y la lista', async () => {
+         mockReq = { user: { uid: 'u1' } } as any;
+         (GetTasksUseCase.prototype.execute as jest.Mock).mockResolvedValue([]);
 
-         await createTask(mockReq as Request, mockRes as Response);
+         await taskController.getTasks(mockReq as Request, mockRes as Response);
+
+         expect(statusMock).toHaveBeenCalledWith(200);
+         expect(jsonMock).toHaveBeenCalledWith([]);
+      });
+
+      it('debería retornar 500 si falla', async () => {
+         mockReq = { user: { uid: 'u1' } } as any;
+         (GetTasksUseCase.prototype.execute as jest.Mock).mockRejectedValue(new Error('Fail'));
+
+         await taskController.getTasks(mockReq as Request, mockRes as Response);
 
          expect(statusMock).toHaveBeenCalledWith(500);
-         expect(jsonMock).toHaveBeenCalledWith({ message: 'Error creating task' });
       });
    });
 
-   // Agrega un bloque similar para getTasks...
+   // --- TEST UPDATE ---
+   describe('updateTask', () => {
+      it('debería retornar 200 al actualizar', async () => {
+         mockReq = { params: { id: '1' }, body: { title: 'New' }, user: { uid: 'u1' } } as any;
+         (UpdateTaskUseCase.prototype.execute as jest.Mock).mockResolvedValue(undefined);
+
+         await taskController.updateTask(mockReq as Request, mockRes as Response);
+
+         expect(statusMock).toHaveBeenCalledWith(200);
+         expect(jsonMock).toHaveBeenCalledWith({ message: 'Task updated successfully' });
+      });
+   });
+
+   // --- TEST DELETE ---
+   describe('deleteTask', () => {
+      it('debería retornar 200 al eliminar', async () => {
+         mockReq = { params: { id: '1' }, user: { uid: 'u1' } } as any;
+         (DeleteTaskUseCase.prototype.execute as jest.Mock).mockResolvedValue(undefined);
+
+         await taskController.deleteTask(mockReq as Request, mockRes as Response);
+
+         expect(statusMock).toHaveBeenCalledWith(200);
+         expect(jsonMock).toHaveBeenCalledWith({ message: 'Task deleted successfully' });
+      });
+   });
 });

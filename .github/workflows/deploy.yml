@@ -1,0 +1,41 @@
+name: Deploy to Firebase
+
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # --- BACKEND ---
+      - name: Install Backend
+        run: cd functions && npm ci
+
+      - name: Build Backend
+        run: cd functions && npm run build
+
+      # --- FRONTEND ---
+      - name: Install Frontend
+        run: cd frontend && npm ci
+
+      - name: Build Frontend (Production)
+        run: cd frontend && npx ng build --configuration production
+
+      # --- DEPLOY ---
+      - name: Deploy to Firebase
+        uses: w9jds/firebase-action@master
+        with:
+          args: deploy --only hosting,functions,firestore:rules
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+          PROJECT_ID: challenge-to-do
