@@ -1,15 +1,17 @@
 import { Injectable, inject } from '@angular/core';
-import { Auth, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, signOut, user, User } from '@angular/fire/auth';
+import { Auth, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, signOut, User } from '@angular/fire/auth';
 import { Observable, from } from 'rxjs';
+import { FirebaseWrapperService } from './firebase-wrapper.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   private auth: Auth = inject(Auth);
+  private fireWrapper = inject(FirebaseWrapperService);
 
   // Observable del usuario actual (para usar en Guards y Componentes)
-  user$: Observable<User | null> = user(this.auth);
+  user$: Observable<User | null> = this.fireWrapper.authState(this.auth);
 
   // 1. Login con Email/Password
   loginWithEmail(email: string, password: string): Observable<any> {

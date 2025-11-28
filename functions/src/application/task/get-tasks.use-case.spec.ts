@@ -1,0 +1,14 @@
+import { GetTasksUseCase } from './get-tasks.use-case';
+import { TaskRepository } from '../../domain/repositories/task.repository';
+
+const mockRepo = {
+   getAllByUserId: jest.fn()
+} as unknown as TaskRepository;
+
+describe('GetTasksUseCase', () => {
+   it('debería llamar al repositorio con el userId', async () => {
+      const useCase = new GetTasksUseCase(mockRepo);
+      await useCase.execute('user-1');
+      expect(mockRepo.getAllByUserId).toHaveBeenCalledWith('user-1');
+   });
+});

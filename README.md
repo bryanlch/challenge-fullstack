@@ -1,63 +1,68 @@
 # 🚀 Task Management System (Challenge Full Stack)
 
-Aplicación integral de gestión de tareas con roles de supervisión, desarrollada con **Angular 17+** y **Firebase Cloud Functions**.
+Aplicación integral de gestión de tareas con roles de supervisión y tablero interactivo, desarrollada con **Angular 17+** y **Firebase Cloud Functions**.
 
-## 📋 Descripción
-Sistema diseñado para gestionar flujos de trabajo en equipo. Permite crear tareas, asignarlas a otros usuarios (rol supervisor) o auto-asignarlas. Implementa un tablero Kanban interactivo con estados (Pendiente, En Curso, Completado).
+## 📋 Descripción del Proyecto
+Este sistema permite gestionar flujos de trabajo colaborativos. A diferencia de una lista de tareas tradicional, esta solución implementa un **Tablero Kanban** visual donde se pueden gestionar estados (Pendiente, En Curso, Completado) y asignar tareas a otros usuarios bajo un rol de supervisión.
+
+[cite_start]Cumple con los requerimientos técnicos de escalabilidad, seguridad y calidad de código solicitados en el challenge[cite: 68, 69].
 
 ## 🏗 Arquitectura y Diseño
-El proyecto sigue una **Clean Architecture** estricta en el Backend y **Component-Based Architecture** en el Frontend.
+
+El proyecto sigue una estructura de **Monorepo** que unifica Frontend y Backend para facilitar el CI/CD.
 
 
 
 [Image of Clean Architecture Diagram]
 
 
-### Backend (Node.js + Express + Firebase)
-[cite_start]Se desacopló la lógica en capas para cumplir con principios **SOLID** y **DDD**[cite: 102]:
-* **Domain:** Entidades (`Task`, `User`) y Contratos de Repositorios (Interfaces). No tiene dependencias externas.
-* **Application:** Casos de Uso (`CreateTaskUseCase`, `CheckUserUseCase`). Contiene la lógica pura de negocio.
-* **Infrastructure:** Implementación real (Firestore, Express Controllers, Rutas).
+### 1. Backend (Clean Architecture & DDD)
+[cite_start]Se desacopló la lógica en capas estrictas para cumplir con principios **SOLID**[cite: 36, 38]:
+* **Domain:** Entidades (`Task`, `User`) y Contratos (Interfaces). Sin dependencias externas.
+* **Application:** Casos de Uso (`CreateTaskUseCase`, `CheckUserUseCase`). Lógica pura de negocio.
+* **Infrastructure:** Implementación real (Firestore Repository, Express Controllers).
+* [cite_start]**Patrones:** Repository Pattern, Factory, Singleton (Firebase Instance)[cite: 40].
 
-### Frontend (Angular 17)
-* **Standalone Components:** Arquitectura moderna sin `NgModules`.
-* **Signals:** Manejo de estado reactivo granular para alto rendimiento (evitando `Zone.js` overhead).
-* **Separation of Concerns:** Lógica delegada en Servicios y Guards.
+### 2. Frontend (Angular 17 - Component Based)
+* [cite_start]**Architecture:** Standalone Components (Sin NgModules)[cite: 39].
+* **State Management:** Uso nativo de **Angular Signals** para reactividad granular y alto rendimiento.
+* **Separation of Concerns:** Lógica delegada en Servicios (`TaskService`, `AuthService`) y Guards (`AuthGuard`).
+* [cite_start]**Lazy Loading:** Módulos cargados bajo demanda para optimizar el bundle[cite: 57].
+
+## 🌟 Features Destacados (Valor Agregado)
+* **Tablero Kanban:** Visualización de tareas por columnas de estado con indicadores de color translúcidos.
+* **Gestión de Roles:** Sistema para auto-asignarse tareas o asignarlas a terceros (Rol Supervisor).
+* **Filtros Inteligentes:** Separación automática entre "Mis Tareas" y "Tareas Supervisadas".
+* [cite_start]**Seguridad Híbrida:** Autenticación delegada en Firebase Auth + Validación de Tokens JWT propios en el Backend[cite: 43].
 
 ## 🛠 Stack Tecnológico
 
 ### Frontend
 * **Framework:** Angular 17.3
-* **UI Library:** Angular Material (Dialogs, Chips, Toolbar) + Bootstrap 5 (Grid System).
-* **Estilos:** SCSS con arquitectura BEM y variables.
-* **Reactive:** RxJS + Angular Signals.
+* **UI Library:** Angular Material (Dialogs, Selects, Toolbar) + Bootstrap 5 (Grid System).
+* **Testing:** Karma + Jasmine (Configuración nativa robusta).
 
 ### Backend
-* **Runtime:** Node.js 20+ en Cloud Functions (Gen 2).
-* **Framework:** Express.js (dentro de Cloud Functions).
-* **Lenguaje:** TypeScript estricto.
-* **Patrones:** Repository Pattern, Singleton (Firebase Instance), Factory (Use Cases).
-
-### Herramientas y Paquetes Clave
-* `concurrently`: Para ejecutar emuladores y compilación en paralelo (Hot Reload).
-* `firebase-admin`: SDK para gestión segura de Firestore y Auth.
-* `npx kill-port`: Utilidad para gestión de puertos en desarrollo.
+* **Runtime:** Node.js 20 en Cloud Functions (Gen 2).
+* **Framework:** Express.js sobre Cloud Functions.
+* [cite_start]**Base de Datos:** Firestore (NoSQL)[cite: 23].
+* **Testing:** Jest + ts-jest (Cobertura de controladores y casos de uso).
 
 ## 🚀 Instalación y Ejecución
 
 ### Prerrequisitos
 * Node.js v18+
-* Java JDK 21+ (Para emuladores de Firebase)
-* Firebase CLI (`npm install -g firebase-tools`)
+* Java JDK 21+ (Requerido para emuladores de Firebase actuales).
+* Firebase CLI (`npm install -g firebase-tools`).
 
 ### Pasos
 1.  **Clonar repositorio:**
     ```bash
-    git clone <URL_REPO>
-    cd challenge-to-do
+    git clone <URL_TU_REPO>
+    cd challenge-fullstack
     ```
 
-2.  **Instalar dependencias:**
+2.  **Instalar dependencias (Script unificado):**
     ```bash
     npm install                   # Raíz
     cd functions && npm install   # Backend
@@ -65,11 +70,14 @@ El proyecto sigue una **Clean Architecture** estricta en el Backend y **Componen
     ```
 
 3.  **Ejecutar en modo Desarrollo (Hot Reload):**
-    Desde la raíz:
+    Desde la raíz, ejecuta el script que levanta emuladores y compilador:
     ```bash
     npm run dev:watch
     ```
-    *Esto levantará el Backend en `localhost:5001` y Firestore en `localhost:8080`.*
+    *Esto levantará:*
+    * Backend API: `http://localhost:5001/...`
+    * Firestore Emulator: `localhost:8085`
+    * Emulator UI: `http://localhost:4000`
 
 4.  **Ejecutar Frontend:**
     En otra terminal:
@@ -79,12 +87,11 @@ El proyecto sigue una **Clean Architecture** estricta en el Backend y **Componen
     ```
     *Abrir navegador en `http://localhost:4200`.*
 
-## 🧪 Testing
-Se incluyen pruebas unitarias para servicios y casos de uso.
-* **Backend:** `cd functions && npm test`
-* **Frontend:** `cd frontend && ng test`
+## 🧪 Testing (Cobertura > 75%)
+[cite_start]El proyecto incluye pruebas unitarias tanto para lógica de negocio como para componentes visuales[cite: 51].
 
-## 🔒 Seguridad
-* **Middleware JWT:** Validación de tokens de Firebase Auth en cada petición al Backend.
-* **Guards:** Protección de rutas `/app/*` en el Frontend.
-* **Data Isolation:** Consultas a Firestore filtradas por `userId` o `supervisorId`.
+### Backend (Jest)
+Pruebas de Controladores y Casos de Uso.
+```bash
+cd functions
+npm run test:coverage

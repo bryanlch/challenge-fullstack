@@ -13,12 +13,6 @@ export const validateToken = async (req: Request, res: Response, next: NextFunct
    try {
       const authHeader = req.headers.authorization;
 
-      if (!authHeader) {
-         req.user = { uid: "usuario_prueba_123" } as any;
-         next();
-         return;
-      }
-
       if (!authHeader || !authHeader.startsWith('Bearer ')) {
          res.status(401).json({ message: 'Unauthorized: No token provided' });
          return;
