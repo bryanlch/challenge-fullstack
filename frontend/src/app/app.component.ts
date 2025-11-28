@@ -5,8 +5,8 @@ import { RouterOutlet } from "@angular/router";
     selector: "app-root",
     standalone: true,
     imports: [RouterOutlet],
-    //templateUrl: "./app.component.html",
-    template: `<router-outlet></router-outlet>`,
+    templateUrl: "./app.component.html",
+    //template: `<router-outlet></router-outlet>`,
 })
 export class AppComponent {
     title = "challenge-to-do-frontend";
