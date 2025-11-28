@@ -4,12 +4,14 @@ import { CheckUserUseCase } from '../../../application/user/check-user.use-case'
 import { CreateUserUseCase } from '../../../application/user/create-user.use-case';
 import { ProfileUserUseCase } from '../../../application/user/profile-user.use-case';
 import { SearchUserUseCase } from '../../../application/user/search-user.use-case';
+import { GetAllUserUseCase } from '../../../application/user/get-all-user.use-case';
 
 const userRepository = new FirestoreUserRepository();
 const checkUserUseCase = new CheckUserUseCase(userRepository);
 const createUserUseCase = new CreateUserUseCase(userRepository);
 const profileUserUseCase = new ProfileUserUseCase(userRepository);
 const searchUserUseCase = new SearchUserUseCase(userRepository);
+const getAllUserUseCase = new GetAllUserUseCase(userRepository);
 
 export const checkUser = async (req: Request, res: Response) => {
    try {
@@ -45,7 +47,6 @@ export const createUser = async (req: Request, res: Response) => {
       const userCreated = await createUserUseCase.execute(name, lastname, email);
       res.status(201).json(userCreated);
    } catch (error: unknown) {
-      console.error(error);
       const message = error instanceof Error ? error.message : 'Error creating user';
       res.status(500).json({ message });
    }
@@ -67,7 +68,6 @@ export const profileUser = async (req: Request, res: Response) => {
 
       res.status(200).json(user);
    } catch (error: unknown) {
-      console.error(error);
       const message = error instanceof Error ? error.message : 'Error retrieving user profile';
       res.status(500).json({ message });
    }
@@ -84,8 +84,17 @@ export const searchUser = async (req: Request, res: Response) => {
       const users = await searchUserUseCase.execute(term);
       res.status(200).json(users);
    } catch (error) {
-      console.error(error);
       const message = error instanceof Error ? error.message : 'Error retrieving user profile';
+      res.status(500).json({ message });
+   }
+}
+
+export const getAllUsers = async (req: Request, res: Response) => {
+   try {
+      const users = await getAllUserUseCase.execute();
+      res.status(200).json(users);
+   } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Error retrieving users';
       res.status(500).json({ message });
    }
 }

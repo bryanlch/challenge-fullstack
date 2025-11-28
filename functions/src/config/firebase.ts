@@ -1,13 +1,8 @@
 import * as admin from 'firebase-admin';
 
 if (!admin.apps.length) {
-   admin.initializeApp({
-      projectId: 'challenge-to-do'
-   });
+   admin.initializeApp();
 }
-
 export const db = admin.firestore();
 
-db.settings({
-   ignoreUndefinedProperties: true
-});
+db.settings({ ignoreUndefinedProperties: true });

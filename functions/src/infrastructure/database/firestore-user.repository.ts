@@ -4,6 +4,7 @@ import { UserRepository } from "../../domain/repositories/user.repository";
 
 export class FirestoreUserRepository implements UserRepository {
    private collection = db.collection('users');
+
    async searchUsers(term: string): Promise<User[]> {
       const q = term.trim();
       if (!q) return [];
@@ -44,5 +45,14 @@ export class FirestoreUserRepository implements UserRepository {
          createdAt: new Date()
       });
       return user;
+   }
+
+   async getAll(): Promise<User[]> {
+      const snapshot = await this.collection.get();
+
+      return snapshot.docs.map(doc => ({
+         uid: doc.id,
+         ...doc.data()
+      })) as User[];
    }
 }

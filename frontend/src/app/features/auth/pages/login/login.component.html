@@ -31,7 +31,7 @@
           Continuar
         </button>
       </form>
-      } @if (step() !== 'password') {
+      } @if (step() === 'password') {
       <div class="mb-3 text-center">
         <p class="text-muted mb-1">Hola, {{ emailForm.value.email }}</p>
         <button mat-button color="primary" class="small-btn" (click)="goBack()">

@@ -12,12 +12,12 @@ app.use(cors({ origin: true }));
 app.use(express.json());
 
 // Rutas
-app.get('health', (req, res) => {
+app.get('/health', (req, res) => {
    res.status(200).send('OK');
 });
-app.use('/v1/users', userRoutes);
+app.use('/api/v1/users', userRoutes);
 // Rutas Privadas
-app.use('/v1/tasks', validateToken, taskRoutes);
+app.use('/api/v1/tasks', validateToken, taskRoutes);
 
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
    console.error(err);

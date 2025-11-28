@@ -19,7 +19,7 @@ export class UserService {
    getUsers(term?: string): Observable<Array<{
       name: string; lastname: string; email: string
    }>> {
-      return this.http.get<Array<{ name: string; lastname: string; email: string }>>(`${this.apiUrl}/search`, {
+      return this.http.get<Array<{ name: string; lastname: string; email: string }>>(`${this.apiUrl}`, {
          params: term ? { term } : {}
       });
    }

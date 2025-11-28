@@ -29,7 +29,6 @@ export const createTask = async (req: Request, res: Response) => {
       const task = await createTaskUseCase.execute(supervisorId, assignedToId, title, description);
       res.status(201).json(task);
    } catch (error) {
-      console.error(error);
       res.status(500).json({ message: 'Error creating task' });
    }
 };
@@ -45,8 +44,8 @@ export const getTasks = async (req: Request, res: Response) => {
       const tasks = await getTasksUseCase.execute(userId);
       res.status(200).json(tasks);
    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Error getting tasks' });
+      const message = error instanceof Error ? error.message : 'Error getting tasks';
+      res.status(500).json({ message });
    }
 };
 
@@ -57,7 +56,6 @@ export const updateTask = async (req: Request, res: Response) => {
       await updateTaskUseCase.execute(id, updates);
       res.status(200).json({ message: 'Task updated successfully' });
    } catch (error) {
-      console.error(error);
       res.status(500).json({ message: 'Error updating task' });
    }
 }
@@ -68,7 +66,6 @@ export const deleteTask = async (req: Request, res: Response) => {
       await deleteTaskUseCase.execute(id);
       res.status(200).json({ message: 'Task deleted successfully' });
    } catch (error) {
-      console.error(error);
       res.status(500).json({ message: 'Error deleting task' });
    }
 };
