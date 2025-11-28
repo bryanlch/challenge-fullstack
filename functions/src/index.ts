@@ -5,6 +5,7 @@ import { userRoutes } from './infrastructure/http/routes/user.routes';
 import { validateToken } from './infrastructure/http/middleware/auth.middleware';
 import { taskRoutes } from './infrastructure/http/routes/task.routes';
 import { userPublicRoutes } from './infrastructure/http/routes/user-public.routes';
+import { sendTaskNotification } from './infrastructure/triggers/on-task-created.trigger';
 
 const app = express();
 
@@ -34,3 +35,4 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
 });
 
 export const api = functions.https.onRequest(app);
+export const onTaskCreated = sendTaskNotification;
