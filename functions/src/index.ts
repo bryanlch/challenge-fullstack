@@ -4,6 +4,7 @@ import cors from 'cors';
 import { userRoutes } from './infrastructure/http/routes/user.routes';
 import { validateToken } from './infrastructure/http/middleware/auth.middleware';
 import { taskRoutes } from './infrastructure/http/routes/task.routes';
+import { userPublicRoutes } from './infrastructure/http/routes/user-public.routes';
 
 const app = express();
 
@@ -11,12 +12,20 @@ const app = express();
 app.use(cors({ origin: true }));
 app.use(express.json());
 
-// Rutas
+//app.use(helmet())
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true }));
+
+// Rutas 
+// Health Check
 app.get('/health', (req, res) => {
    res.status(200).send('OK');
 });
-app.use('/api/v1/users', userRoutes);
+// Rutas Públicas
+app.use('/api/v1/users/public', userPublicRoutes);
+
 // Rutas Privadas
+app.use('/api/v1/users', validateToken, userRoutes);
 app.use('/api/v1/tasks', validateToken, taskRoutes);
 
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {

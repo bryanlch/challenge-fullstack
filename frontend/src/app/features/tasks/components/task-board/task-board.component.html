@@ -1,72 +1,44 @@
 <div class="row g-3">
+  @for (col of columns; track $index) {
   <div class="col-md-4">
-    <div class="status-column pending-col p-3 rounded h-100">
-      <h6 class="text-uppercase fw-bold text-danger mb-3 opacity-75">
-        Pendientes ({{ pendingTasks.length }})
+    <div
+      class="status-column p-3 rounded-4 shadow-sm h-100"
+      [ngClass]="col.class"
+    >
+      <h6
+        class="text-uppercase fw-bold mb-3 opacity-75"
+        [ngClass]="col.titleClass"
+      >
+        {{ col.label }} ({{ col.items.length }})
       </h6>
 
-      @for (task of pendingTasks; track task.id) {
+      @for (task of col.items; track task.id) {
       <mat-card
-        class="mb-2 task-card"
+        class="mb-3 task-card rounded-3 shadow-sm"
         [class.clickable]="!isReadOnly"
         (click)="onCardClick(task)"
       >
-        <mat-card-content class="p-3">
-          <p class="fw-bold mb-1">{{ task.title }}</p>
-          <p class="text-muted small mb-0 text-truncate">
-            {{ task.description }}
-          </p>
-        </mat-card-content>
-      </mat-card>
-      }
-    </div>
-  </div>
-
-  <div class="col-md-4">
-    <div class="status-column progress-col p-3 rounded h-100">
-      <h6 class="text-uppercase fw-bold text-warning mb-3 opacity-75 text-dark">
-        En Curso ({{ progressTasks.length }})
-      </h6>
-
-      @for (task of progressTasks; track task.id) {
-      <mat-card
-        class="mb-2 task-card"
-        [class.clickable]="!isReadOnly"
-        (click)="onCardClick(task)"
-      >
-        <mat-card-content class="p-3">
-          <p class="fw-bold mb-1">{{ task.title }}</p>
-          <p class="text-muted small mb-0 text-truncate">
-            {{ task.description }}
-          </p>
-        </mat-card-content>
-      </mat-card>
-      }
-    </div>
-  </div>
-
-  <div class="col-md-4">
-    <div class="status-column completed-col p-3 rounded h-100">
-      <h6 class="text-uppercase fw-bold text-success mb-3 opacity-75">
-        Completadas ({{ completedTasks.length }})
-      </h6>
-
-      @for (task of completedTasks; track task.id) {
-      <mat-card
-        class="mb-2 task-card"
-        [class.clickable]="!isReadOnly"
-        (click)="onCardClick(task)"
-      >
-        <mat-card-content class="p-3">
-          <p class="fw-bold mb-1 text-decoration-line-through">
+        <mat-card-content class="px-3 py-2.5">
+          <p
+            class="fw-semibold mb-1"
+            [ngClass]="{
+              'text-decoration-line-through': task.status === 'completed'
+            }"
+          >
             {{ task.title }}
           </p>
-          <p class="text-muted small mb-0">
-            {{ task.createdAt | date : "shortDate" }}
+
+          <p class="text-muted small mb-0 text-truncate">
+            {{
+              task.status === "completed"
+                ? (task.createdAt | date : "shortDate")
+                : task.description
+            }}
           </p>
         </mat-card-content>
       </mat-card>
       }
     </div>
   </div>
+  }
 </div>

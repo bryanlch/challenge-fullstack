@@ -1,4 +1,4 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 // Material Modules
@@ -15,6 +15,8 @@ import { TaskDialogComponent } from '../../components/task-dialog/task-dialog.co
 import { TaskService } from '../../../../core/services/task.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { Task } from '../../../../core/models/task.model';
+import { switchMap, timer } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-task-list',
@@ -33,6 +35,7 @@ import { Task } from '../../../../core/models/task.model';
   styleUrls: ['./task-list.component.scss']
 })
 export class TaskListComponent implements OnInit {
+  private destroyRef = inject(DestroyRef);
   private taskService = inject(TaskService);
   private authService = inject(AuthService);
   private dialog = inject(MatDialog);
@@ -57,7 +60,8 @@ export class TaskListComponent implements OnInit {
     this.authService.user$.subscribe(user => {
       if (user) {
         this.currentUserId.set(user.uid);
-        this.loadTasks();
+        this.startPolling();
+        //this.loadTasks();
       }
     });
   }
@@ -75,6 +79,21 @@ export class TaskListComponent implements OnInit {
         this.loading.set(false);
       }
     });
+  }
+
+  startPolling() {
+    timer(0, 10000)
+      .pipe(
+        switchMap(() => this.taskService.getTasks()),
+        takeUntilDestroyed(this.destroyRef) // Asegura que se complete al destruir el componente
+      )
+      .subscribe({
+        next: (data) => {
+          this.tasks.set(data);
+          if (this.loading()) this.loading.set(false);
+        },
+        error: (err) => console.error('Error en polling', err)
+      });
   }
 
   openTaskDialog(task?: Task) {

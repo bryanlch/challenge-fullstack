@@ -15,13 +15,34 @@ export class TaskBoardComponent {
   @Input() isReadOnly = false;
   @Output() taskClick = new EventEmitter<Task>();
 
-  get pendingTasks() { return this.tasks.filter(t => t.status === 'pending'); }
-  get progressTasks() { return this.tasks.filter(t => t.status === 'in_progress'); }
-  get completedTasks() { return this.tasks.filter(t => t.status === 'completed'); }
+  get columns() {
+    return [
+      {
+        label: 'Pendientes',
+        items: this.filterBy('pending'),
+        class: 'pending-col',
+        titleClass: 'text-dark'
+      },
+      {
+        label: 'En Curso',
+        items: this.filterBy('in_progress'),
+        class: 'progress-col',
+        titleClass: 'text-dark'
+      },
+      {
+        label: 'Completadas',
+        items: this.filterBy('completed'),
+        class: 'completed-col',
+        titleClass: 'text-dark'
+      }
+    ];
+  }
+
+  private filterBy(status: string) {
+    return this.tasks.filter(t => t.status === status);
+  }
 
   onCardClick(task: Task) {
-    if (!this.isReadOnly) {
-      this.taskClick.emit(task);
-    }
+    if (!this.isReadOnly) this.taskClick.emit(task);
   }
 }

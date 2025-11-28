@@ -29,7 +29,7 @@
       <mat-label>Seleccionar Responsable</mat-label>
       <mat-select formControlName="assignedToId">
         @for (user of users$ | async; track user.email) {
-        <mat-option [value]="user.email">
+        <mat-option [value]="user.uid">
           {{ user.name }} {{ user.lastname }}
         </mat-option>
         }
