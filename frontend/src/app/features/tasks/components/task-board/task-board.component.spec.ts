@@ -3,11 +3,10 @@ import { TaskBoardComponent } from './task-board.component';
 import { Task } from '../../../../core/models/task.model';
 import { By } from '@angular/platform-browser';
 
-describe('TaskBoardComponent', () => {
+describe('TaskBoardComponent (refactorizado)', () => {
   let component: TaskBoardComponent;
   let fixture: ComponentFixture<TaskBoardComponent>;
 
-  // Datos de prueba adaptados al NUEVO MODELO (Sin userId, con supervisorId/assignedToId)
   const mockTasks: Task[] = [
     {
       id: '1',
@@ -46,10 +45,7 @@ describe('TaskBoardComponent', () => {
     fixture = TestBed.createComponent(TaskBoardComponent);
     component = fixture.componentInstance;
 
-    // Asignamos los inputs iniciales
     component.tasks = mockTasks;
-
-    // Detectamos cambios para que el HTML se actualice con los datos
     fixture.detectChanges();
   });
 
@@ -57,48 +53,44 @@ describe('TaskBoardComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('debería filtrar las tareas correctamente por estado', () => {
-    // Probamos que los getters del componente filtren bien según el status
-    expect(component.pendingTasks.length).toBe(1);
-    expect(component.pendingTasks[0].title).toBe('Task 1'); // status: 'pending'
+  it('debería generar correctamente las columnas dinámicas', () => {
+    const cols = component.columns;
 
-    expect(component.progressTasks.length).toBe(1);
-    expect(component.progressTasks[0].title).toBe('Task 2'); // status: 'in_progress'
+    expect(cols.length).toBe(3);
 
-    expect(component.completedTasks.length).toBe(1);
-    expect(component.completedTasks[0].title).toBe('Task 3'); // status: 'completed'
+    expect(cols[0].label).toBe('Pendientes');
+    expect(cols[0].items.length).toBe(1);
+
+    expect(cols[1].label).toBe('En Curso');
+    expect(cols[1].items.length).toBe(1);
+
+    expect(cols[2].label).toBe('Completadas');
+    expect(cols[2].items.length).toBe(1);
+  });
+
+  it('debería renderizar las tarjetas en el DOM', () => {
+    const cards = fixture.debugElement.queryAll(By.css('.task-card'));
+    expect(cards.length).toBe(3);
   });
 
   it('debería emitir el evento taskClick al hacer click en una tarjeta', () => {
-    // Espiamos el evento de salida (Output)
     spyOn(component.taskClick, 'emit');
 
-    // Buscamos la primera tarjeta disponible en el DOM
-    // Asegúrate de que en tu HTML la tarjeta tenga la clase '.task-card'
-    const cardDebugEl = fixture.debugElement.query(By.css('.task-card'));
+    const firstCard = fixture.debugElement.query(By.css('.task-card'));
+    firstCard.nativeElement.click();
 
-    if (cardDebugEl) {
-      // Simulamos el click nativo
-      cardDebugEl.nativeElement.click();
-    } else {
-      // Fallback por si el selector CSS no coincide, llamamos al método directo
-      component.onCardClick(mockTasks[0]);
-    }
-
-    expect(component.taskClick.emit).toHaveBeenCalledWith(mockTasks[0]);
+    expect(component.taskClick.emit).toHaveBeenCalledOnceWith(mockTasks[0]);
   });
 
-  it('NO debería emitir click si es de solo lectura (isReadOnly)', () => {
-    // Configuramos el modo solo lectura
+  it('NO debería emitir evento si isReadOnly = true', () => {
     component.isReadOnly = true;
-    fixture.detectChanges(); // Actualizamos la vista
+    fixture.detectChanges();
 
     spyOn(component.taskClick, 'emit');
 
-    // Intentamos hacer click
-    component.onCardClick(mockTasks[0]);
+    const firstCard = fixture.debugElement.query(By.css('.task-card'));
+    firstCard.nativeElement.click();
 
-    // Verificamos que NO se haya emitido nada
     expect(component.taskClick.emit).not.toHaveBeenCalled();
   });
 });

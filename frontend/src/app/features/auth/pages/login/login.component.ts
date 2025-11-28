@@ -73,7 +73,7 @@ export class LoginComponent {
     this.loading.set(true);
 
     this.authService.loginWithEmail(email, password).subscribe({
-      next: () => this.router.navigate(['/tasks']), // 
+      next: () => this.router.navigate(['/tasks']),
       error: (err) => {
         this.loading.set(false);
         this.snackBar.open('Credenciales incorrectas', 'Cerrar', { duration: 3000 });
@@ -105,7 +105,8 @@ export class LoginComponent {
         }).subscribe({
           next: () => {
             this.snackBar.open('¡Cuenta creada!', 'OK', { duration: 3000 });
-            this.router.navigate(['/tasks']);
+            this.loading.set(false);
+            this.router.navigate(['/tasks']).then(() => console.log("NAVEGÓ"));
           },
           error: () => {
             this.loading.set(false);

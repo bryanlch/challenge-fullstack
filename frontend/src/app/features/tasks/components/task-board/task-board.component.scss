@@ -1,20 +1,17 @@
 .pending-col {
   background-color: rgba(244, 67, 54, 0.15);
-  border: 1px solid rgba(244, 67, 54, 0.3);
 }
 
 .progress-col {
   background-color: rgba(255, 193, 7, 0.15);
-  border: 1px solid rgba(255, 193, 7, 0.3);
 }
 
 .completed-col {
   background-color: rgba(76, 175, 80, 0.15);
-  border: 1px solid rgba(76, 175, 80, 0.3);
 }
 
 .task-card {
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: transform 0.2s;
   
   &.clickable:hover {
     cursor: pointer;
