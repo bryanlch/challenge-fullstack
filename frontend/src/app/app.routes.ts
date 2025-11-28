@@ -14,7 +14,7 @@ export const routes: Routes = [
         component: LoginComponent
     },
     {
-        path: 'app',
+        path: '',
         component: MainLayoutComponent,
         canActivate: [authGuard],
         children: [
