@@ -14,7 +14,7 @@ import { TaskBoardComponent } from '../../components/task-board/task-board.compo
 import { TaskDialogComponent } from '../../components/task-dialog/task-dialog.component';
 import { TaskService } from '../../../../core/services/task.service';
 import { AuthService } from '../../../../core/services/auth.service';
-import { Task } from '../../../../core/models/task.model';
+import { Task, TaskWithAction } from '../../../../core/models/task.model';
 import { switchMap, timer } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -29,7 +29,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     MatSnackBarModule,
     MatDividerModule,
     MatProgressBarModule,
-    TaskBoardComponent // El componente de las columnas
+    TaskBoardComponent
   ],
   templateUrl: './task-list.component.html',
   styleUrls: ['./task-list.component.scss']
@@ -61,7 +61,6 @@ export class TaskListComponent implements OnInit {
       if (user) {
         this.currentUserId.set(user.uid);
         this.startPolling();
-        //this.loadTasks();
       }
     });
   }
@@ -85,7 +84,7 @@ export class TaskListComponent implements OnInit {
     timer(0, 10000)
       .pipe(
         switchMap(() => this.taskService.getTasks()),
-        takeUntilDestroyed(this.destroyRef) // Asegura que se complete al destruir el componente
+        takeUntilDestroyed(this.destroyRef)
       )
       .subscribe({
         next: (data) => {
@@ -96,7 +95,7 @@ export class TaskListComponent implements OnInit {
       });
   }
 
-  openTaskDialog(task?: Task) {
+  openTaskDialog(task?: TaskWithAction) {
     const dialogRef = this.dialog.open(TaskDialogComponent, {
       width: '600px',
       disableClose: true,
@@ -111,19 +110,7 @@ export class TaskListComponent implements OnInit {
 
       this.loading.set(true);
 
-      if (task) {
-        this.taskService.updateTask(task.id, result).subscribe({
-          next: () => {
-            this.loadTasks();
-            this.showSuccess('Tarea actualizada correctamente');
-          },
-          error: () => {
-            this.showError('Error actualizando la tarea');
-            this.loading.set(false);
-          }
-        });
-
-      } else {
+      if (!task?.action) {
         const newTaskPayload = {
           ...result,
           supervisorId: this.currentUserId()
@@ -136,6 +123,33 @@ export class TaskListComponent implements OnInit {
           },
           error: () => {
             this.showError('Error creando la tarea');
+            this.loading.set(false);
+          }
+        });
+      }
+
+      if (task?.action === 'edit') {
+        this.taskService.updateTask(task.id, result).subscribe({
+          next: () => {
+            this.loadTasks();
+            this.showSuccess('Tarea actualizada correctamente');
+          },
+          error: () => {
+            this.showError('Error actualizando la tarea');
+            this.loading.set(false);
+          }
+        });
+
+      }
+
+      if (task?.action === 'delete') {
+        this.taskService.deleteTask(task.id).subscribe({
+          next: () => {
+            this.loadTasks();
+            this.showSuccess('Tarea eliminada correctamente');
+          },
+          error: () => {
+            this.showError('Error eliminando la tarea');
             this.loading.set(false);
           }
         });

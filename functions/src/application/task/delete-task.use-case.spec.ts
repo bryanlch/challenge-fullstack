@@ -6,7 +6,7 @@ const mockRepo = {
 } as unknown as TaskRepository;
 
 describe('DeleteTaskUseCase', () => {
-   it('debería llamar al repositorio con el id correcto', async () => {
+   it('should call the repository with the correct id', async () => {
       const useCase = new DeleteTaskUseCase(mockRepo);
       const taskId = 'task-123';
 

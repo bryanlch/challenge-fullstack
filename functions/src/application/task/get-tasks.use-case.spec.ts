@@ -6,7 +6,7 @@ const mockRepo = {
 } as unknown as TaskRepository;
 
 describe('GetTasksUseCase', () => {
-   it('debería llamar al repositorio con el userId', async () => {
+   it('should call the repository with the userId', async () => {
       const useCase = new GetTasksUseCase(mockRepo);
       await useCase.execute('user-1');
       expect(mockRepo.getAllByUserId).toHaveBeenCalledWith('user-1');

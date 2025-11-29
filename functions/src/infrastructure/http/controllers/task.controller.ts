@@ -39,7 +39,7 @@ export const createTask = async (req: Request, res: Response) => {
       res.status(HttpStatus.CREATED).json(task);
 
    } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : TaskMessages.ERROR.CREATE_FAILED;
+      const message = TaskMessages.ERROR.CREATE_FAILED;
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message });
    }
 };
@@ -59,7 +59,7 @@ export const getTasks = async (req: Request, res: Response) => {
       res.status(HttpStatus.OK).json(tasks);
 
    } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : TaskMessages.ERROR.GET_FAILED;
+      const message = TaskMessages.ERROR.GET_FAILED;
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message });
    }
 };
@@ -83,7 +83,7 @@ export const updateTask = async (req: Request, res: Response) => {
       });
 
    } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : TaskMessages.ERROR.UPDATE_FAILED;
+      const message = TaskMessages.ERROR.UPDATE_FAILED;
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message });
    }
 };
@@ -106,7 +106,7 @@ export const deleteTask = async (req: Request, res: Response) => {
       });
 
    } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : TaskMessages.ERROR.DELETE_FAILED;
+      const message = TaskMessages.ERROR.DELETE_FAILED;
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message });
    }
 };

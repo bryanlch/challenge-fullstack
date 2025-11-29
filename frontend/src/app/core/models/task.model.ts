@@ -9,3 +9,9 @@ export interface Task {
    status: TaskStatus;
    createdAt: string | Date;
 }
+
+export type TaskAction = 'edit' | 'delete' | 'create';
+
+export interface TaskWithAction extends Task {
+   action: TaskAction;
+}

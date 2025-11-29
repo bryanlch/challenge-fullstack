@@ -14,11 +14,11 @@ describe('CreateTaskUseCase', () => {
       jest.clearAllMocks();
    });
 
-   it('debería asignar la tarea a uno mismo si assignedToId viene vacío', async () => {
+   it('should assign the task to self if assignedToId is empty', async () => {
       const supervisorId = 'sup-1';
       const assignedToId = '';
-      const title = 'Nueva Tarea';
-      const desc = 'Desc';
+      const title = 'New Task';
+      const desc = 'Description';
 
       await useCase.execute(supervisorId, assignedToId, title, desc);
 
@@ -29,7 +29,7 @@ describe('CreateTaskUseCase', () => {
       }));
    });
 
-   it('debería asignar la tarea a otro usuario si se especifica', async () => {
+   it('should assign the task to another user if specified', async () => {
       const supervisorId = 'sup-1';
       const assignedToId = 'user-2';
 

@@ -23,10 +23,21 @@ export const validateToken = async (req: Request, res: Response, next: NextFunct
       const decodedToken = await admin.auth().verifyIdToken(token);
       req.user = decodedToken;
 
+      if (!req.user) {
+         res.status(401).json({ message: 'Token verification failed' });
+         return;
+      }
+
       next();
 
-   } catch (error) {
+   } catch (error: any) {
       console.error('Error verifying token:', error);
+
+      if (error.code === 'auth/id-token-expired') {
+         res.status(401).json({ message: 'Token expired' });
+         return;
+      }
+
       res.status(401).json({ message: 'Unauthorized: Invalid token' });
    }
 };

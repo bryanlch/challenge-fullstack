@@ -16,25 +16,48 @@
       <mat-card
         class="mb-3 task-card rounded-3 shadow-sm"
         [class.clickable]="!isReadOnly"
-        (click)="onCardClick(task)"
       >
-        <mat-card-content class="px-3 py-2.5">
-          <p
-            class="fw-semibold mb-1"
-            [ngClass]="{
-              'text-decoration-line-through': task.status === 'completed'
-            }"
-          >
-            {{ task.title }}
-          </p>
+        <mat-card-content
+          class="px-3 py-2.5 d-flex justify-content-between align-items-center gap-3"
+        >
+          <div class="flex-1">
+            <p
+              class="fw-semibold mb-1"
+              [ngClass]="{
+                'text-decoration-line-through': task.status === 'completed'
+              }"
+            >
+              {{ task.title }}
+            </p>
 
-          <p class="text-muted small mb-0 text-truncate">
-            {{
-              task.status === "completed"
-                ? (task.createdAt | date : "shortDate")
-                : task.description
-            }}
-          </p>
+            <p class="text-muted small mb-0 text-truncate">
+              {{
+                task.status === "completed"
+                  ? (task.createdAt | date : "shortDate")
+                  : getShort(task.description)
+              }}
+            </p>
+          </div>
+
+          <div class="d-flex align-items-center justify-content-center gap-2">
+            @if(showButtonEdit(task)) {
+            <button
+              mat-icon-button
+              (click)="onCardClick(task)"
+              class="shadow-sm btn-hover btn-primary-solid"
+            >
+              <mat-icon>edit</mat-icon>
+            </button>
+            } @if( showButtonDelete(task) ) {
+            <button
+              mat-icon-button
+              (click)="onDeleteClick(task)"
+              class="shadow-sm btn-hover btn-warn-solid"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
+            }
+          </div>
         </mat-card-content>
       </mat-card>
       }
