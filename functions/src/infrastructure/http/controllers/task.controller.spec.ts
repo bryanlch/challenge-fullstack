@@ -5,7 +5,6 @@ import { GetTasksUseCase } from '../../../application/task/get-tasks.use-case';
 import { UpdateTaskUseCase } from '../../../application/task/update-task.use-case';
 import { DeleteTaskUseCase } from '../../../application/task/delete-task.use-case';
 
-// Mocks de los Casos de Uso
 jest.mock('../../../application/task/create-task.use-case');
 jest.mock('../../../application/task/get-tasks.use-case');
 jest.mock('../../../application/task/update-task.use-case');
@@ -24,10 +23,9 @@ describe('TaskController', () => {
       mockRes = { status: statusMock } as unknown as Response;
    });
 
-   // --- TEST CREATE ---
    describe('createTask', () => {
       it('debería retornar 201 al crear', async () => {
-         mockReq = { body: { title: 'T' }, user: { uid: 'u1' } } as any;
+         mockReq = { body: { title: 'T', description: 'Test description' }, user: { uid: 'u1' } } as any;
          (CreateTaskUseCase.prototype.execute as jest.Mock).mockResolvedValue({ id: '1' });
          await taskController.createTask(mockReq as Request, mockRes as Response);
          expect(statusMock).toHaveBeenCalledWith(201);
@@ -40,14 +38,13 @@ describe('TaskController', () => {
       });
 
       it('debería retornar 500 si falla', async () => {
-         mockReq = { body: {}, user: { uid: 'u1' } } as any;
+         mockReq = { body: { title: 'T', description: 'Test description' }, user: { uid: 'u1' } } as any;
          (CreateTaskUseCase.prototype.execute as jest.Mock).mockRejectedValue(new Error('Fail'));
          await taskController.createTask(mockReq as Request, mockRes as Response);
          expect(statusMock).toHaveBeenCalledWith(500);
       });
    });
 
-   // --- TEST GET ---
    describe('getTasks', () => {
       it('debería retornar 200 y la lista', async () => {
          mockReq = { user: { uid: 'u1' } } as any;
@@ -69,7 +66,6 @@ describe('TaskController', () => {
       });
    });
 
-   // --- TEST UPDATE ---
    describe('updateTask', () => {
       it('debería retornar 200 al actualizar', async () => {
          mockReq = { params: { id: '1' }, body: { title: 'New' }, user: { uid: 'u1' } } as any;
@@ -82,7 +78,6 @@ describe('TaskController', () => {
       });
    });
 
-   // --- TEST DELETE ---
    describe('deleteTask', () => {
       it('debería retornar 200 al eliminar', async () => {
          mockReq = { params: { id: '1' }, user: { uid: 'u1' } } as any;

@@ -1,13 +1,13 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TaskBoardComponent } from './task-board.component';
-import { Task } from '../../../../core/models/task.model';
+import { Task, TaskWithAction } from '../../../../core/models/task.model';
 import { By } from '@angular/platform-browser';
 
 describe('TaskBoardComponent (refactorizado)', () => {
   let component: TaskBoardComponent;
   let fixture: ComponentFixture<TaskBoardComponent>;
 
-  const mockTasks: Task[] = [
+  const mockTasks: TaskWithAction[] = [
     {
       id: '1',
       title: 'Task 1',
@@ -15,6 +15,7 @@ describe('TaskBoardComponent (refactorizado)', () => {
       status: 'pending',
       supervisorId: 'sup-1',
       assignedToId: 'user-1',
+      action: 'edit',
       createdAt: new Date()
     },
     {
@@ -24,6 +25,7 @@ describe('TaskBoardComponent (refactorizado)', () => {
       status: 'in_progress',
       supervisorId: 'sup-1',
       assignedToId: 'user-1',
+      action: 'edit',
       createdAt: new Date()
     },
     {
@@ -33,10 +35,10 @@ describe('TaskBoardComponent (refactorizado)', () => {
       status: 'completed',
       supervisorId: 'sup-1',
       assignedToId: 'user-1',
+      action: 'edit',
       createdAt: new Date()
     }
   ];
-
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [TaskBoardComponent]
@@ -49,48 +51,90 @@ describe('TaskBoardComponent (refactorizado)', () => {
     fixture.detectChanges();
   });
 
-  it('debería crearse', () => {
-    expect(component).toBeTruthy();
+  // -----------------------------
+  // COLUMNS
+  // -----------------------------
+  it('debe dividir tareas en las 3 columnas correctas', () => {
+    const [pending, progress, completed] = component.columns;
+
+    expect(pending.items.length).toBe(1);
+    expect(progress.items.length).toBe(1);
+    expect(completed.items.length).toBe(1);
   });
 
-  it('debería generar correctamente las columnas dinámicas', () => {
-    const cols = component.columns;
+  it('debe mostrar botón Edit cuando el task NO está completado y no es readOnly', () => {
+    const task = mockTasks[0];
+    component.isReadOnly = false;
 
-    expect(cols.length).toBe(3);
-
-    expect(cols[0].label).toBe('Pendientes');
-    expect(cols[0].items.length).toBe(1);
-
-    expect(cols[1].label).toBe('En Curso');
-    expect(cols[1].items.length).toBe(1);
-
-    expect(cols[2].label).toBe('Completadas');
-    expect(cols[2].items.length).toBe(1);
+    expect(component.showButtonEdit(task)).toBeTrue();
   });
 
-  it('debería renderizar las tarjetas en el DOM', () => {
-    const cards = fixture.debugElement.queryAll(By.css('.task-card'));
-    expect(cards.length).toBe(3);
+  it('no debe mostrar botón Edit cuando el task está completado', () => {
+    const task = mockTasks[2];
+
+    expect(component.showButtonEdit(task)).toBeFalse();
   });
 
-  it('debería emitir el evento taskClick al hacer click en una tarjeta', () => {
-    spyOn(component.taskClick, 'emit');
+  it('debe mostrar botón Delete si assignedToId == supervisorId', () => {
+    const task = {
+      ...mockTasks[0],
+      action: 'delete',
+      assignedToId: '5',
+      supervisorId: '5'
+    };
 
-    const firstCard = fixture.debugElement.query(By.css('.task-card'));
-    firstCard.nativeElement.click();
-
-    expect(component.taskClick.emit).toHaveBeenCalledOnceWith(mockTasks[0]);
+    expect(component.showButtonDelete(task)).toBeTrue();
   });
 
-  it('NO debería emitir evento si isReadOnly = true', () => {
+  it('debe mostrar botón Delete cuando es readOnly', () => {
     component.isReadOnly = true;
-    fixture.detectChanges();
 
+    const task = mockTasks[0];
+    expect(component.showButtonDelete(task)).toBeTrue();
+  });
+
+  it('debe emitir un evento EDIT al hacer click en una card si no es readOnly', () => {
     spyOn(component.taskClick, 'emit');
+    component.isReadOnly = false;
 
-    const firstCard = fixture.debugElement.query(By.css('.task-card'));
-    firstCard.nativeElement.click();
+    const task = mockTasks[0];
+    component.onCardClick(task);
+
+    expect(component.taskClick.emit).toHaveBeenCalledWith({
+      ...task,
+      action: 'edit'
+    });
+  });
+
+  it('NO debe emitir evento edit si es readOnly', () => {
+    spyOn(component.taskClick, 'emit');
+    component.isReadOnly = true;
+
+    const task = mockTasks[0];
+    component.onCardClick(task);
 
     expect(component.taskClick.emit).not.toHaveBeenCalled();
+  });
+
+  it('debe emitir un evento DELETE al hacer click en el botón', () => {
+    spyOn(component.taskClick, 'emit');
+
+    const task = mockTasks[0];
+    component.onDeleteClick(task);
+
+    expect(component.taskClick.emit).toHaveBeenCalledWith({
+      ...task,
+      action: 'delete'
+    });
+  });
+
+  it('debe renderizar 3 columnas en el DOM', () => {
+    const cols = fixture.debugElement.queryAll(By.css('.col-md-4'));
+    expect(cols.length).toBe(3);
+  });
+
+  it('debe renderizar todas las cards de tareas', () => {
+    const cards = fixture.debugElement.queryAll(By.css('mat-card'));
+    expect(cards.length).toBe(3);
   });
 });
