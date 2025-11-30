@@ -8,4 +8,14 @@ module.exports = {
   transform: {
     ...tsJestTransformCfg,
   },
+  roots: ['<rootDir>/src'],
+
+  testPathIgnorePatterns: [
+    "/node_modules/",
+    "/lib/"
+  ],
+
+  transform: {
+    '^.+\\.tsx?$': 'ts-jest',
+  },
 };

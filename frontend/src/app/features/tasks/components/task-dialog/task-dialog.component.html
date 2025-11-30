@@ -1,6 +1,16 @@
 <h2 mat-dialog-title>{{ isEditMode ? "Editar Tarea" : "Nueva Tarea" }}</h2>
 
 <mat-dialog-content>
+  @if (supervisorInfo(); as supervisor) {
+  <div class="supervisor-info p-3 rounded mb-3 d-flex align-items-center gap-2">
+    <div class="d-flex align-items-center">
+      <mat-icon>admin_panel_settings</mat-icon>
+      <small class="d-block fw-bold mx-2">Supervisado por:</small>
+      <span>{{ supervisor.name }} {{ supervisor.lastname }}</span>
+    </div>
+  </div>
+  }
+
   <form [formGroup]="form" class="d-flex flex-column gap-3 pt-2">
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Título</mat-label>
@@ -18,7 +28,7 @@
     >
       <span>¿Asignar a otra persona?</span>
       <mat-slide-toggle formControlName="asSupervisor" color="primary">
-        {{ isSupervisorMode() ? "Sí (Supervisor)" : "No (Auto-asignar)" }}
+        {{ isSupervisorMode() ? "Asignar manualmente" : "Auto-asignar a mí" }}
       </mat-slide-toggle>
     </div>
     } @if (isSupervisorMode()) {
@@ -28,7 +38,7 @@
     >
       <mat-label>Seleccionar Responsable</mat-label>
       <mat-select formControlName="assignedToId">
-        @for (user of users$ | async; track user.email) {
+        @for (user of users(); track user.uid) {
         <mat-option [value]="user.uid">
           {{ user.name }} {{ user.lastname }}
         </mat-option>
@@ -49,11 +59,12 @@
   </form>
 </mat-dialog-content>
 
-<mat-dialog-actions align="end">
-  <button mat-button mat-dialog-close>Cancelar</button>
+<mat-dialog-actions align="end" class="mx-3 mb-3">
+  <button mat-button mat-dialog-close class="rounded-4 px-2">Cancelar</button>
   <button
     mat-flat-button
     color="primary"
+    class="rounded-4 px-2"
     (click)="onSave()"
     [disabled]="form.invalid"
   >

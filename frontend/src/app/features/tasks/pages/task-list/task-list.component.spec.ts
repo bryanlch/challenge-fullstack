@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick, discardPeriodicTasks } from '@angular/core/testing';
 import { TaskListComponent } from './task-list.component';
 import { TaskService } from '../../../../core/services/task.service';
 import { AuthService } from '../../../../core/services/auth.service';
@@ -43,22 +43,32 @@ describe('TaskListComponent', () => {
 
     fixture = TestBed.createComponent(TaskListComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
+    // fixture.detectChanges(); // We call this in tests to control timing
   });
 
-  it('debería cargar tareas al iniciar', () => {
+  it('should load tasks on init', fakeAsync(() => {
+    fixture.detectChanges(); // Triggers ngOnInit -> startPolling
+    tick(); // Advance time for timer(0)
     expect(taskServiceSpy.getTasks).toHaveBeenCalled();
-  });
+    discardPeriodicTasks(); // Clean up timer
+  }));
 
-  it('debería mostrar error si falla la carga de tareas', () => {
+  it('should show error if task loading fails', fakeAsync(() => {
+    fixture.detectChanges();
+    tick();
     taskServiceSpy.getTasks.and.returnValue(throwError(() => new Error('API Fail')));
 
     component.loadTasks();
+    tick();
 
     expect(snackBarSpy.open).toHaveBeenCalledWith('Error cargando las tareas', jasmine.any(String), jasmine.any(Object));
-  });
+    discardPeriodicTasks();
+  }));
 
-  it('debería crear tarea cuando el dialog cierra con datos', () => {
+  it('should create task when dialog closes with data', fakeAsync(() => {
+    fixture.detectChanges();
+    tick();
+
     const dialogResult = { title: 'Nueva', description: 'Desc', assignedToId: 'u-1', status: 'pending' };
     const dialogRefSpyObj = jasmine.createSpyObj({ afterClosed: of(dialogResult) });
     dialogSpy.open.and.returnValue(dialogRefSpyObj);
@@ -67,8 +77,10 @@ describe('TaskListComponent', () => {
     taskServiceSpy.getTasks.and.returnValue(of([]));
 
     component.openTaskDialog();
+    tick();
 
     expect(taskServiceSpy.createTask).toHaveBeenCalled();
     expect(snackBarSpy.open).toHaveBeenCalledWith('Tarea creada exitosamente', 'OK', jasmine.any(Object));
-  });
+    discardPeriodicTasks();
+  }));
 });

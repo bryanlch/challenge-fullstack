@@ -12,10 +12,26 @@
 
 .task-card {
   transition: transform 0.2s;
-  
-  &.clickable:hover {
-    cursor: pointer;
-    transform: translateY(-3px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-  }
+}
+
+.btn-hover:hover {
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.btn-primary-solid {
+  background: rgba(253, 129, 58, 0.993) !important;
+  color: white !important;
+}
+
+.btn-warn-solid {
+  background: rgba(252, 73, 60, 0.904) !important;
+  color: white !important;
+}
+
+.btn-primary-solid mat-icon,
+.btn-warn-solid mat-icon {
+  color: white !important;
 }

@@ -7,7 +7,7 @@ const mockRepo = {
 } as unknown as TaskRepository;
 
 describe('UpdateTaskUseCase', () => {
-   it('debería llamar al repositorio con el id y los datos correctos', async () => {
+   it('should call the repository with the correct id and data', async () => {
       const useCase = new UpdateTaskUseCase(mockRepo);
       const taskId = 'task-123';
       const updates = { title: 'Updated Title', status: TaskStatus.IN_PROGRESS };
