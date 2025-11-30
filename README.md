@@ -92,6 +92,19 @@ El proyecto sigue una estructura de **Monorepo** que unifica Frontend y Backend 
 
 ### Backend (Jest)
 Pruebas de Controladores y Casos de Uso.
+
+## 📂 Estructura del Proyecto y Testing en el Backend
+
+Se adoptó una estrategia de **Co-locación (Co-location)** para las pruebas unitarias.
+En lugar de segregar los tests en una carpeta `__tests__` externa, los archivos de especificación (`.spec.ts`) residen junto al código fuente que validan.
+
+**Beneficios de esta decisión:**
+1.  **Mantenibilidad:** Si un componente se mueve o elimina, su test viaja con él.
+2.  **Visibilidad:** Es evidente qué archivos carecen de pruebas al ver el árbol de directorios.
+3.  **Importaciones:** Facilita el uso de rutas relativas y mocks locales.
+
+### Configuración de Jest (Backend)
+Se configuró `jest.config.js` para ignorar explícitamente la carpeta de compilación (`/lib`) y evitar conflictos entre el código fuente TypeScript y los artefactos JavaScript generados.
 ```bash
 cd functions
 npm run test:coverage

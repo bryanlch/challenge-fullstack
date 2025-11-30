@@ -40,11 +40,11 @@ describe('TaskDialogComponent', () => {
     fixture.detectChanges();
   });
 
-  it('debería crearse', () => {
+  it('should be created', () => {
     expect(component).toBeTruthy();
   });
 
-  it('debería manejar el cambio de modo Supervisor correctamente', () => {
+  it('should handle Supervisor mode change correctly', () => {
     expect(component.isSupervisorMode()).toBeFalse();
     expect(component.form.get('assignedToId')?.value).toBe('u1');
 
@@ -60,7 +60,7 @@ describe('TaskDialogComponent', () => {
     expect(component.form.get('assignedToId')?.value).toBe('u1');
   });
 
-  it('NO debería cerrar el diálogo si el formulario es inválido', () => {
+  it('should NOT close dialog if form is invalid', () => {
     component.form.patchValue({ title: '' });
 
     component.onSave();
@@ -68,7 +68,7 @@ describe('TaskDialogComponent', () => {
     expect(dialogRefMock.close).not.toHaveBeenCalled();
   });
 
-  it('debería enviar los datos limpios al guardar', () => {
+  it('should send clean data on save', () => {
     component.form.patchValue({
       title: 'Nueva Tarea',
       description: 'Descripción',

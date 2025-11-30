@@ -12,7 +12,7 @@ describe('LoginComponent', () => {
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
 
-  // Definimos los espías
+  // Define spies
   let authSpy: jasmine.SpyObj<AuthService>;
   let userSpy: jasmine.SpyObj<UserService>;
   let routerSpy: jasmine.SpyObj<Router>;
@@ -20,10 +20,11 @@ describe('LoginComponent', () => {
   let snackBarSpy: jasmine.SpyObj<MatSnackBar>;
 
   beforeEach(async () => {
-    // Creamos los espías
+    // Create spies
     authSpy = jasmine.createSpyObj('AuthService', ['loginWithEmail', 'registerWithEmail']);
     userSpy = jasmine.createSpyObj('UserService', ['checkUserExists', 'createProfile']);
     routerSpy = jasmine.createSpyObj('Router', ['navigate']);
+    routerSpy.navigate.and.returnValue(Promise.resolve(true));
     dialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
     snackBarSpy = jasmine.createSpyObj('MatSnackBar', ['open']);
 
@@ -52,22 +53,22 @@ describe('LoginComponent', () => {
     fixture.detectChanges();
   });
 
-  it('debería loguear y navegar si el usuario existe', () => {
-    // 1. Configuramos el form
+  it('should login and navigate if user exists', () => {
+    // 1. Configure form
     component.emailForm.setValue({ email: 'exist@test.com' });
 
-    // 2. Mockeamos respuesta positiva (Usuario existe)
+    // 2. Mock positive response (User exists)
     userSpy.checkUserExists.and.returnValue(of({ exists: true }));
 
-    // 3. Ejecutamos
+    // 3. Execute
     component.checkUser();
 
-    // Verificamos cambio de estado
+    // Verify state change
     expect(component.step()).toBe('password');
 
-    // 4. Llenamos password y logueamos
+    // 4. Fill password and login
     component.passwordForm.setValue({ password: '123' });
-    authSpy.loginWithEmail.and.returnValue(of({})); // Éxito
+    authSpy.loginWithEmail.and.returnValue(of({})); // Success
 
     component.login();
 
@@ -75,25 +76,25 @@ describe('LoginComponent', () => {
     expect(routerSpy.navigate).toHaveBeenCalledWith(['/tasks']);
   });
 
-  it('debería abrir registro si el usuario no existe', () => {
+  it('should open registration if user does not exist', () => {
     component.emailForm.setValue({ email: 'new@test.com' });
 
-    // 1. Mockeamos que NO existe
+    // 1. Mock that it does NOT exist
     userSpy.checkUserExists.and.returnValue(of({ exists: false }));
 
-    // 2. CLAVE: Mockeamos el retorno del Dialog.open
-    // Debe devolver un objeto que tenga afterClosed() que devuelva un Observable
+    // 2. KEY: Mock Dialog.open return
+    // Must return an object with afterClosed() returning an Observable
     const dialogRefSpyObj = jasmine.createSpyObj({ afterClosed: of({ name: 'New', password: '123' }) });
     dialogSpy.open.and.returnValue(dialogRefSpyObj);
 
-    // 3. Mockeamos el resto del flujo exitoso
+    // 3. Mock the rest of the successful flow
     authSpy.registerWithEmail.and.returnValue(of({}));
     userSpy.createProfile.and.returnValue(of({}));
 
-    // 4. Ejecutamos
+    // 4. Execute
     component.checkUser();
 
-    // 5. Verificaciones
+    // 5. Verifications
     expect(dialogSpy.open).toHaveBeenCalled();
     expect(authSpy.registerWithEmail).toHaveBeenCalled();
     expect(userSpy.createProfile).toHaveBeenCalled();

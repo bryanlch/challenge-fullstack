@@ -20,7 +20,7 @@ describe('authGuard', () => {
       });
    });
 
-   it('debería redirigir al login si no hay usuario', (done) => {
+   it('should redirect to login if no user', (done) => {
       (Object.getOwnPropertyDescriptor(authServiceSpy, 'user$')?.get as jasmine.Spy).and.returnValue(of(null));
 
       TestBed.runInInjectionContext(() => {
@@ -34,7 +34,7 @@ describe('authGuard', () => {
       });
    });
 
-   it('debería permitir acceso si hay usuario', (done) => {
+   it('should allow access if user exists', (done) => {
       (Object.getOwnPropertyDescriptor(authServiceSpy, 'user$')?.get as jasmine.Spy).and.returnValue(of({ uid: '1' }));
 
       TestBed.runInInjectionContext(() => {

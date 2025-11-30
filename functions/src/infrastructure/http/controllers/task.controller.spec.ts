@@ -24,20 +24,20 @@ describe('TaskController', () => {
    });
 
    describe('createTask', () => {
-      it('debería retornar 201 al crear', async () => {
+      it('should return 201 on create', async () => {
          mockReq = { body: { title: 'T', description: 'Test description' }, user: { uid: 'u1' } } as any;
          (CreateTaskUseCase.prototype.execute as jest.Mock).mockResolvedValue({ id: '1' });
          await taskController.createTask(mockReq as Request, mockRes as Response);
          expect(statusMock).toHaveBeenCalledWith(201);
       });
 
-      it('debería retornar 401 si no hay usuario', async () => {
+      it('should return 401 if no user', async () => {
          mockReq = { body: {}, user: undefined } as any;
          await taskController.createTask(mockReq as Request, mockRes as Response);
          expect(statusMock).toHaveBeenCalledWith(401);
       });
 
-      it('debería retornar 500 si falla', async () => {
+      it('should return 500 on failure', async () => {
          mockReq = { body: { title: 'T', description: 'Test description' }, user: { uid: 'u1' } } as any;
          (CreateTaskUseCase.prototype.execute as jest.Mock).mockRejectedValue(new Error('Fail'));
          await taskController.createTask(mockReq as Request, mockRes as Response);
@@ -46,7 +46,7 @@ describe('TaskController', () => {
    });
 
    describe('getTasks', () => {
-      it('debería retornar 200 y la lista', async () => {
+      it('should return 200 and the list', async () => {
          mockReq = { user: { uid: 'u1' } } as any;
          (GetTasksUseCase.prototype.execute as jest.Mock).mockResolvedValue([]);
 
@@ -56,7 +56,7 @@ describe('TaskController', () => {
          expect(jsonMock).toHaveBeenCalledWith([]);
       });
 
-      it('debería retornar 500 si falla', async () => {
+      it('should return 500 on failure', async () => {
          mockReq = { user: { uid: 'u1' } } as any;
          (GetTasksUseCase.prototype.execute as jest.Mock).mockRejectedValue(new Error('Fail'));
 
@@ -67,7 +67,7 @@ describe('TaskController', () => {
    });
 
    describe('updateTask', () => {
-      it('debería retornar 200 al actualizar', async () => {
+      it('should return 200 on update', async () => {
          mockReq = { params: { id: '1' }, body: { title: 'New' }, user: { uid: 'u1' } } as any;
          (UpdateTaskUseCase.prototype.execute as jest.Mock).mockResolvedValue(undefined);
 
@@ -79,7 +79,7 @@ describe('TaskController', () => {
    });
 
    describe('deleteTask', () => {
-      it('debería retornar 200 al eliminar', async () => {
+      it('should return 200 on delete', async () => {
          mockReq = { params: { id: '1' }, user: { uid: 'u1' } } as any;
          (DeleteTaskUseCase.prototype.execute as jest.Mock).mockResolvedValue(undefined);
 

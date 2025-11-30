@@ -26,12 +26,12 @@ describe('RegisterDialogComponent', () => {
       fixture.detectChanges();
    });
 
-   it('debería inicializarse con el email inyectado', () => {
+   it('should initialize with injected email', () => {
       expect(component).toBeTruthy();
       expect(component.form.valid).toBeFalse();
    });
 
-   it('debería cerrar el dialog con datos si el formulario es válido', () => {
+   it('should close dialog with data if form is valid', () => {
       component.form.patchValue({
          name: 'Juan',
          lastname: 'Perez',
@@ -48,7 +48,7 @@ describe('RegisterDialogComponent', () => {
       }));
    });
 
-   it('debería cerrar con null al cancelar', () => {
+   it('should close with null on cancel', () => {
       component.onCancel();
       expect(dialogRefSpy.close).toHaveBeenCalledWith(null);
    });

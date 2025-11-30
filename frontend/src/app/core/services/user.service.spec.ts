@@ -24,7 +24,7 @@ describe('UserService', () => {
       expect(service).toBeTruthy();
    });
 
-   it('checkUserExists debería hacer GET a /users/check/:email', () => {
+   it('checkUserExists should GET /users/check/:email', () => {
       const email = 'test@test.com';
       const mockResponse = { exists: true };
 
@@ -32,7 +32,7 @@ describe('UserService', () => {
          expect(res.exists).toBeTrue();
       });
 
-      const req = httpMock.expectOne(`${environment.apiUrl}/users/check/${email}`);
+      const req = httpMock.expectOne(`${environment.apiUrl}/users/public/check/${email}`);
       expect(req.request.method).toBe('GET');
       req.flush(mockResponse);
    });

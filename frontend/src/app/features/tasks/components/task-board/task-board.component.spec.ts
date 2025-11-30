@@ -3,7 +3,7 @@ import { TaskBoardComponent } from './task-board.component';
 import { Task, TaskWithAction } from '../../../../core/models/task.model';
 import { By } from '@angular/platform-browser';
 
-describe('TaskBoardComponent (refactorizado)', () => {
+describe('TaskBoardComponent', () => {
   let component: TaskBoardComponent;
   let fixture: ComponentFixture<TaskBoardComponent>;
 
@@ -39,6 +39,7 @@ describe('TaskBoardComponent (refactorizado)', () => {
       createdAt: new Date()
     }
   ];
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [TaskBoardComponent]
@@ -51,10 +52,7 @@ describe('TaskBoardComponent (refactorizado)', () => {
     fixture.detectChanges();
   });
 
-  // -----------------------------
-  // COLUMNS
-  // -----------------------------
-  it('debe dividir tareas en las 3 columnas correctas', () => {
+  it('should divide tasks into correct columns', () => {
     const [pending, progress, completed] = component.columns;
 
     expect(pending.items.length).toBe(1);
@@ -62,20 +60,20 @@ describe('TaskBoardComponent (refactorizado)', () => {
     expect(completed.items.length).toBe(1);
   });
 
-  it('debe mostrar botón Edit cuando el task NO está completado y no es readOnly', () => {
+  it('should show Edit button when task is NOT completed and not readOnly', () => {
     const task = mockTasks[0];
     component.isReadOnly = false;
 
     expect(component.showButtonEdit(task)).toBeTrue();
   });
 
-  it('no debe mostrar botón Edit cuando el task está completado', () => {
+  it('should not show Edit button when task is completed', () => {
     const task = mockTasks[2];
 
     expect(component.showButtonEdit(task)).toBeFalse();
   });
 
-  it('debe mostrar botón Delete si assignedToId == supervisorId', () => {
+  it('should show Delete button if assignedToId == supervisorId', () => {
     const task = {
       ...mockTasks[0],
       action: 'delete',
@@ -86,14 +84,14 @@ describe('TaskBoardComponent (refactorizado)', () => {
     expect(component.showButtonDelete(task)).toBeTrue();
   });
 
-  it('debe mostrar botón Delete cuando es readOnly', () => {
+  it('should show Delete button when readOnly', () => {
     component.isReadOnly = true;
 
     const task = mockTasks[0];
     expect(component.showButtonDelete(task)).toBeTrue();
   });
 
-  it('debe emitir un evento EDIT al hacer click en una card si no es readOnly', () => {
+  it('should emit EDIT event when clicking a card if not readOnly', () => {
     spyOn(component.taskClick, 'emit');
     component.isReadOnly = false;
 
@@ -106,7 +104,7 @@ describe('TaskBoardComponent (refactorizado)', () => {
     });
   });
 
-  it('NO debe emitir evento edit si es readOnly', () => {
+  it('should NOT emit edit event if readOnly', () => {
     spyOn(component.taskClick, 'emit');
     component.isReadOnly = true;
 
@@ -116,7 +114,7 @@ describe('TaskBoardComponent (refactorizado)', () => {
     expect(component.taskClick.emit).not.toHaveBeenCalled();
   });
 
-  it('debe emitir un evento DELETE al hacer click en el botón', () => {
+  it('should emit DELETE event when clicking the button', () => {
     spyOn(component.taskClick, 'emit');
 
     const task = mockTasks[0];
@@ -128,12 +126,12 @@ describe('TaskBoardComponent (refactorizado)', () => {
     });
   });
 
-  it('debe renderizar 3 columnas en el DOM', () => {
+  it('should render 3 columns in the DOM', () => {
     const cols = fixture.debugElement.queryAll(By.css('.col-md-4'));
     expect(cols.length).toBe(3);
   });
 
-  it('debe renderizar todas las cards de tareas', () => {
+  it('should render all task cards', () => {
     const cards = fixture.debugElement.queryAll(By.css('mat-card'));
     expect(cards.length).toBe(3);
   });
