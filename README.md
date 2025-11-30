@@ -107,11 +107,11 @@ Este proyecto utiliza **Firebase propio**. Para probarlo con tu proyecto:
 
 ## 🧪 Testing
 
-# Ejecutar tests de Backend
+#### Ejecutar tests de Backend
 - Backend: 100% Unit Testing en Casos de Uso usando Mocks de Firestore.
 - cd functions && npm test
 
-# Ejecutar tests de Frontend
+#### Ejecutar tests de Frontend
 - Frontend: Tests de componentes críticos.  
 - cd frontend && ng test
 
