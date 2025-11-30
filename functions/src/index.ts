@@ -12,7 +12,7 @@ import { corsOptions } from './infrastructure/http/cors.config';
 const app = express();
 
 app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
+app.options(/.*/, cors(corsOptions));
 
 app.use(
    helmet({
