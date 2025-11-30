@@ -106,8 +106,14 @@ Este proyecto utiliza **Firebase propio**. Para probarlo con tu proyecto:
 ---
 
 ## 🧪 Testing
-- Unit Testing implementado con Jest y Karma
-- Mocks de Firestore para tests unitarios en el backend.   
+
+# Ejecutar tests de Backend
+- Backend: 100% Unit Testing en Casos de Uso usando Mocks de Firestore.
+- cd functions && npm test
+
+# Ejecutar tests de Frontend
+- Frontend: Tests de componentes críticos.  
+- cd frontend && ng test
 
 ---
 
